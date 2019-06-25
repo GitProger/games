@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <io.h>
 #include <stdlib.h> 
+#include <stdio.h>
 
 struct Tpart {
     int x;
@@ -10,115 +11,101 @@ struct Tpart {
     unsigned char direction;
 };
 
-int tail, doornot=0;
+int tail, doornot = 0;
 int a, b, score, hsc; /*a: x of food; b:y of food;hsc: high score*/
 char filename[256];
 Tpart snake[1500];
 bool levelenabled;
-////////////////////////////////////////////////////////////
-void setscore(int i){
- FILE *F;
- F=fopen("Score.data","w");
- fprintf(F,"%d",i);
- fclose(F);
+/*//////////////////////////////////////////////////////////*/
+void setscore(int i) {
+    FILE *F = fopen("Score.data","w");
+    fprintf(F, "%d", i);
+    fclose(F);
 }
 
-void getscore(void){
- FILE *F;
- _finddata_t data;
- long nFind=_findfirst("Score.data",&data);
- if(nFind!=-1)
- {
-   _findclose(nFind);
-   F=fopen("Score.data","r");
-   fscanf(F,"%d",&hsc);
-   fclose(F);
- }else{
- F=fopen("Score.data","w");
- fprintf(F,"%d",hsc);
- fclose(F);
- } 
+void getscore(void) {
+    FILE *F = fopen("Score.data", "r");
+    if (!F) {
+        setscore(hsc);
+    } else {
+        fscanf(F, "%d", &hsc);
+        fclose(F);
+    }
 }
 ////////////////////////////////////////////////////////////
-void setcur(int mode){
-HANDLE handle;
-handle=GetStdHandle(STD_OUTPUT_HANDLE);
-CONSOLE_CURSOR_INFO structCursorInfo;
-GetConsoleCursorInfo(handle,&structCursorInfo);
-if(mode)structCursorInfo.bVisible=TRUE;
-else structCursorInfo.bVisible=FALSE;
-SetConsoleCursorInfo(handle,&structCursorInfo);
+void setcur(bool mode) {
+    HANDLE handle;
+    handle = GetStdHandle(STD_OUTPUT_HANDLE);
+    CONSOLE_CURSOR_INFO structCursorInfo;
+    GetConsoleCursorInfo(handle, &structCursorInfo);
+    structCursorInfo.bVisible = mode ? TRUE : FALSE;
+    SetConsoleCursorInfo(handle, &structCursorInfo);
 }
 ////////////////////////////////////////////////////////////
 void _GOTO(int X, int Y){
-COORD C;
-C.X=X;
-C.Y=Y;
-SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),C);
+   COORD C = {.X = X, .Y = Y};
+   SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), C);
 }
 ////////////////////////////////////////////////////////////
 
-bool loadlevel(const char* levelname){
-  FILE *F;
+bool loadlevel(const char* levelname) {
+    FILE *F;
+    _finddata_t data;
+    long nFind = _findfirst(levelname, &data);
+    if (nFind != -1) {
+        F = fopen(levelname, "r");
+        char walls[53];
+        int x, y;
+        bool level[50][30];  
 
- _finddata_t data;
- long nFind=_findfirst(levelname,&data);
- if(nFind!=-1)
- {
-   F=fopen(levelname,"r");
-  char walls[53];
-  int x,y;
-  bool level[50][30];  
+        for (y = 0; y < 30; y++)
+            for (x = 0; x < 50; x++)
+                level[x][y] = 0;
 
-
-
-for(y=0;y<30;++y)
-for(x=0;x<50;++x)
-   level[x][y]=0;
-
-   for(y=0;y<30;++y){
-    fgets(walls,sizeof(walls),F);
+        for (y = 0; y < 30; ++y) {
+            fgets(walls, sizeof(walls), F);
         
-    for(x=0;x<50;++x){
-         if((walls[x]=='1')){
-              level[x][y]=true;
-              _GOTO(x,y);
-              printf("%c",219);
-           }else{
-                 level[x][y]=false;   
+            for (x = 0; x < 50; ++x) {
+                if (walls[x] == '1') {
+                    level[x][y] = true;
+                    _GOTO(x, y);
+                    printf("%c", 219);
+                } else {
+                    level[x][y] = false;   
                 }
-       walls[x]=0;
-    }
-     
-   }
-
-
-   for(x=0;x<50;++x){
-   for(y=0;y<30;++y){
-     if(level[x][y]){
-        if((a==x)&&(b==y)){
-         doornot=0;
-         _GOTO(a,b);
-         printf("%c",219);
+                walls[x] = 0;
+            } 
         }
 
-      if((snake[0].x==x)&&(snake[0].y==y))return true;
-    }}}
+        for (x = 0; x < 50; ++x) {
+            for (y = 0; y < 30; ++y) {
+                if(level[x][y]) {
+                    if ((a == x) && (b == y)){
+                        doornot = 0;
+                        _GOTO(a, b);
+                        printf("%c", 219);
+                    }
+                    if ((snake[0].x == x) && (snake[0].y == y))
+                        return true;
+                }
+            }
+        }
 
-   fclose(F);
- }else{
-  _GOTO(0,0);
-  printf("Level not found.");
-  levelenabled=false;
-  while(getch()!=13);
-  _GOTO(0,0);
-  printf("                ");
- } 
-_findclose(nFind);
-return false;
+        fclose(F);
+    } else {
+        _GOTO(0, 0);
+        printf("Level not found.");
+        levelenabled = false;
+        while (getch() != 13);
+        _GOTO(0, 0);
+        printf("                ");
+    } 
+    _findclose(nFind);
+    return false;
 }
 ////////////////////////////////////////////////////////////
 //1-up 2-left 3-down 4-left
+
 int main(){
 
 printf("Megaware Snake [Version 0.2]\n(c) Megaware Corporation, 2018. All rights reserved.\n\n");
@@ -322,5 +309,5 @@ if((snake[0].x==snake[i].x)&&(snake[0].y==snake[i].y)){
 //////////////LOSING
   key=0;  
   }
- return 0;
+     return 0;
 }
