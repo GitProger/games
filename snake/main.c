@@ -2,20 +2,16 @@
 #include <conio.h>
 #include <windows.h>
 #include <io.h>
-#include <stdlib.h> /* not to use delete and new, because it use
-    to much disk space   
-    g++ create very big binaries 
-    */
-////////////////////////////////////////////////////////////
-struct Tpart{
-int x;
-int y;
-unsigned char direction;
+#include <stdlib.h> 
+
+struct Tpart {
+    int x;
+    int y;
+    unsigned char direction;
 };
 
-int tail;
-int doornot=0;
-int a,b,score,hsc;//a: x of food; b:y of food;hsc: high score
+int tail, doornot=0;
+int a, b, score, hsc; /*a: x of food; b:y of food;hsc: high score*/
 char filename[256];
 Tpart snake[1500];
 bool levelenabled;
