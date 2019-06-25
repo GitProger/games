@@ -168,134 +168,137 @@ int main() {
     snake[0].direction = 3;
     doornot = 0;
  
-    for(;;) {
-/////////////////////////////////////////////////////
-//KEYCODES
-    for(i = 0; i < 10000 / speed; i++)
-    if(kbhit()) { 
-         key=getch();
-         if( key==27 )return 0;
-         if( key==13 )goto start;
-         if((key=='d')&&(snake[0].direction!=4))snake[0].direction=2; else 
-         if((key=='s')&&(snake[0].direction!=1))snake[0].direction=3; else
-         if((key=='a')&&(snake[0].direction!=2))snake[0].direction=4; else
-         if((key=='w')&&(snake[0].direction!=3))snake[0].direction=1; else
-         key=getch();
-    }
-         if((key == 80) && (snake[0].direction!=1) && (snake[0].direction!=1) )
-            snake[0].direction=3;
-         if((key == 75) && (snake[0].direction!=2) && (snake[0].direction!=2) )
-            snake[0].direction=4;
-         if((key == 72) && (snake[0].direction!=3) && (snake[0].direction!=3) )
-            snake[0].direction=1;
-         if((key == 77) && (snake[0].direction!=4) && (snake[0].direction!=4) )
-            snake[0].direction=2; 
-//KEYCODES 
-//CLEAR
-      setcur(0);
-      _GOTO(snake[tail].x,snake[tail].y);
-      printf(" ");         
-//HEAD MOVE
-         if(snake[0].direction==2)snake[0].x=snake[0].x+1; 
-         if(snake[0].direction==3)snake[0].y=snake[0].y+1;
-         if(snake[0].direction==4)snake[0].x=snake[0].x-1;
-         if(snake[0].direction==1)snake[0].y=snake[0].y-1;
-          if(snake[0].x< 0)snake[0].x=49;
-          if(snake[0].y< 0)snake[0].y=29;
-          if(snake[0].x>49)snake[0].x= 0;
-          if(snake[0].y>29)snake[0].y= 0;
-//HEAD MOVE
-//////////////////////////////////////////////////FOOD
-       if(doornot%50==0){
-       doornot=0;
-         _GOTO(a,b);
-         printf(" ");
-        food:
+    for (;;) {
+        /*////////////////////////////////////////////////////
+        KEYCODES */
+        for (i = 0; i < 10000 / speed; i++)
+            if (kbhit()) { 
+                key = getch();
+                if ( key == 27 ) return 0;
+                if ( key == 13 ) goto start;
+                if ((key == 'd') && (snake[0].direction != 4)) snake[0].direction = 2; else 
+                if ((key == 's') && (snake[0].direction != 1)) snake[0].direction = 3; else
+                if ((key == 'a') && (snake[0].direction != 2)) snake[0].direction = 4; else
+                if ((key == 'w') && (snake[0].direction != 3)) snake[0].direction = 1; else
+                key = getch();
+            }
+        if ((key == 80) && (snake[0].direction != 1))
+            snake[0].direction = 3;
+        if ((key == 75) && (snake[0].direction != 2))
+            snake[0].direction = 4;
+        if ((key == 72) && (snake[0].direction != 3))
+            snake[0].direction = 1;
+        if ((key == 77) && (snake[0].direction != 4))
+            snake[0].direction = 2; 
+        /* KEYCODES */
+        /* CLEAR */
+        setcur(false);
+        _GOTO(snake[tail].x, snake[tail].y);
+        printf(" ");         
+        /* HEAD MOVE */
+        if (snake[0].direction == 2) snake[0].x = snake[0].x + 1; 
+        if (snake[0].direction == 3) snake[0].y = snake[0].y + 1;
+        if (snake[0].direction == 4) snake[0].x = snake[0].x - 1;
+        if (snake[0].direction == 1) snake[0].y = snake[0].y - 1;
+        if (snake[0].x < 0)  snake[0].x = 49;
+        if (snake[0].y < 0)  snake[0].y = 29;
+        if (snake[0].x > 49) snake[0].x = 0;
+        if (snake[0].y > 29) snake[0].y = 0;
+        /* HEAD MOVE */
+        /* /////////////////////////////////////////////////FOOD */
+        if (doornot % 50 == 0) {
+            doornot = 0;
+            _GOTO(a, b);
+            printf(" ");
+         food:
 
-       a=rand()%50;
-       b=rand()%30;
-        for(int i=0;i<tail+1;++i)if((snake[i].x==a)&&(snake[i].y==b))goto food;
-       _GOTO(a,b);
-       printf("$");
-       }
-       doornot++;
-/////////////////////////////////////////////////FOOD
-////////////////////////////POINTS
+            a = rand() % 50;
+            b = rand() % 30;
+            int q   
+            for (q = 0; q < tail + 1; ++q)
+                if ((snake[q].x == a) && (snake[q].y == b))
+                    goto food;
+            _GOTO(a, b);
+            putchar('$');
+        }
+        doornot++;
+        /* /////////////////////////////////////////////////FOOD */
+        /* ///////////////////////////POINTS */
+        if ((snake[0].x == a) && (snake[0].y == b)) {
+            score++;
+            if (key != 9) /*cheetes */
+                tail++;
+            _GOTO(0, 31);
+            getscore();
+            if (score > hsc) setscore(score);
+            getscore();
+            printf("Score: %d\nHich score: %d", score, hsc);
+            doornot = 0;
+            goto food;
+        }
+        /* ///////////////////////////POINTS */
 
-if((snake[0].x==a)&&(snake[0].y==b)){
-score++;
-     if(key!=9)//cheetes
-tail++;
-_GOTO(0,31);
-getscore();
-if(score>hsc)setscore(score);
-getscore();
-printf("Score: %d\nHich score: %d",score,hsc);
-doornot=0;
-goto food;
-}
-////////////////////////////POINTS
+        /* ////////////////////////////////////////////////////////////BODY */
+        for (i = tail; i > 0; --i)
+            snake[i].direction = snake[i - 1].direction;
 
-/////////////////////////////////////////////////////////////BODY
-      for(i=tail;i>0;--i)snake[i].direction=snake[i-1].direction;
+        for (n = 1; n < tail + 1; ++n) {    
+            if (snake[n].direction == 3) {
+                snake[n].x = snake[n - 1].x;
+                snake[n].y = snake[n - 1].y - 1;
+            }
+            if (snake[n].direction == 1) {
+                snake[n].x = snake[n - 1].x;
+                snake[n].y = snake[n - 1].y + 1;
+            }
+            if (snake[n].direction == 2) {
+                snake[n].x=snake[n - 1].x - 1;
+                snake[n].y=snake[n - 1].y;
+            }
+            if (snake[n].direction == 4) {
+                snake[n].x=snake[n - 1].x + 1;
+                snake[n].y=snake[n - 1].y;
+            }
+            if (snake[n].x < 0) snake[n].x = 49;
+            if (snake[n].y < 0) snake[n].y = 29;
+            if (snake[n].x > 49) snake[n].x = 0;
+            if (snake[n].y > 29) snake[n].y = 0;
 
-      for(n=1;n<tail+1;++n){    
-      if(snake[n].direction==3){
-         snake[n].x=snake[n-1].x;
-         snake[n].y=snake[n-1].y-1;
-      }
-      if(snake[n].direction==1){
-         snake[n].x=snake[n-1].x;
-         snake[n].y=snake[n-1].y+1;
-      }
-      if(snake[n].direction==2){
-         snake[n].x=snake[n-1].x-1;
-         snake[n].y=snake[n-1].y;
-      }
-      if(snake[n].direction==4){
-         snake[n].x=snake[n-1].x+1;
-         snake[n].y=snake[n-1].y;
-      }
-         if(snake[n].x< 0)snake[n].x=49;
-         if(snake[n].y< 0)snake[n].y=29;
-         if(snake[n].x>49)snake[n].x= 0;
-         if(snake[n].y>29)snake[n].y= 0;
+            _GOTO(snake[n].x,snake[n].y);
+            putchar('@');      
+        }
+        /* /////////////////////////////////////////////////BODY */
+        /* HEAD */
+        _GOTO(snake[0].x, snake[0].y);
+        switch (snake[0].direction) {
+            case 1: putchar('^');
+                    break; 
+            case 2: putchar('>');
+                    break;
+            case 3: putchar('v');
+                    break;
+            case 4: putchar('<');
+                    break;
+        }
+        /* /////////////LOSING */
 
-       _GOTO(snake[n].x,snake[n].y);
-       printf("@");      
-      }
-//////////////////////////////////////////////////BODY
-//HEAD
-      _GOTO(snake[0].x,snake[0].y);
-      switch(snake[0].direction){
-       case 1: printf("^");
-               break; 
-       case 2: printf(">");
-               break;
-       case 3: printf("v");
-               break;
-       case 4: printf("<");
-               break;
-      }
-//////////////LOSING
+        if (levelenabled)
+            if (loadlevel(filename))
+                goto die;
 
-if(levelenabled==true)
-  if(loadlevel(filename)==true)
-    goto die;
-
-for(i=1;i<tail+1;++i){
-if((snake[0].x==snake[i].x)&&(snake[0].y==snake[i].y)){
- die:
- _GOTO(snake[0].x,snake[0].y);
- printf("X");
- _GOTO(0,0);
- printf("Game over! Press any key to continue...");
- getch();
- _GOTO(0,0);
- goto start;
-}
-}
-//////////////LOSING
+        for (i = 1; i < tail + 1; ++i) {
+            if ((snake[0].x == snake[i].x) && (snake[0].y == snake[i].y)) {
+              die:
+                _GOTO(snake[0].x, snake[0].y);
+                putchar('X');
+                _GOTO(0, 0);
+                printf("Game over! Press any key to continue...");
+                getch();
+                _GOTO(0,0);
+                goto start;
+            }
+        }
+        /* /////////////LOSING */
         key=0;  
     }
     return 0;
