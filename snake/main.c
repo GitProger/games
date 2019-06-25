@@ -32,7 +32,7 @@ void getscore(void) {
         fclose(F);
     }
 }
-////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////*/
 void setcur(bool mode) {
     HANDLE handle;
     handle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -41,12 +41,12 @@ void setcur(bool mode) {
     structCursorInfo.bVisible = mode ? TRUE : FALSE;
     SetConsoleCursorInfo(handle, &structCursorInfo);
 }
-////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////*/
 void _GOTO(int X, int Y){
    COORD C = {.X = X, .Y = Y};
    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), C);
 }
-////////////////////////////////////////////////////////////
+/*//////////////////////////////////////////////////////////*/
 
 bool loadlevel(const char* levelname) {
     FILE *F;
@@ -103,83 +103,72 @@ bool loadlevel(const char* levelname) {
     _findclose(nFind);
     return false;
 }
-////////////////////////////////////////////////////////////
-//1-up 2-left 3-down 4-left
+/**///////////////////////////////////////////////////////////
+//1-up 2-left 3-down 4-left */
 
-int main(){
+int main() {
+    getch();
+    _GOTO(0,0);
+    printf("                            \n                                                     ");
+    int i, n, speed;
+  start:
+    _GOTO(0,0);
+    setcur(true);
+    filename[0] = 0;
+    levelenabled = false;
+    printf("Press \"Enter\" to nothing, or enter a level name:\n");
+    gets(filename);
+    if (filename[0]) {
+        levelenabled = true;
+    }
+    tail = speed = 1;
+    system("cls");
+    char *str = (char*)malloc(2048);
+    printf("Speed (1-5): ");
+    gets(str);
+    sscanf(str, "%d", &speed);
+    free(str);
+    if (speed < 1 || speed > 5) speed = 1;
+    system("cls");
+    setcur(0);
+    _GOTO(0, 0);
+    printf("Press \"Enter\" to continue...                      ");
+    while (getch() != '\r');
+    
+    for (i = 0; i < 1500; ++i) {
+        snake[i].x = -1;
+        snake[i].y = -1;
+        snake[i].direction = 0;
+    }
+    
+    doornot = 0;
+    char key = 0;
+    _GOTO(0, 0); 
+    for (i = 0; i < 31; ++i) {
+        for (n = 0; n < 52; ++n) {
+            putchar(' ');
+        }
+        printf("\n");
+    }
 
-printf("Megaware Snake [Version 0.2]\n(c) Megaware Corporation, 2018. All rights reserved.\n\n");
-getch();
-_GOTO(0,0);
-printf("                            \n                                                     ");
+    for (i = 0; i < 30; ++i) {
+        _GOTO(50, i);
+        putchar('#');
+    }
+    _GOTO(0,30);
+    printf("###################################################");
 
-int i,n,speed;
-
-
- start:
-_GOTO(0,0);
-setcur(1);
-filename[0]=0;
-levelenabled=false;
-printf("Press \"Enter\" to nothing, or enter a level name:\n");
-
-gets(filename);
-if(filename[0]!=0){
- levelenabled=true;
-}
-
-tail=speed=1;
-
-
-system("cls");
-char *str = (char*)malloc(2048);
-printf("Speed (1-5): ");
-gets(str);
-sscanf(str,"%d",&speed);
-free(str);
-if(speed < 1 || speed > 5)speed=1;
-system("cls");
-
-     setcur(0);
-     _GOTO(0,0);
-     printf("Press \"Enter\" to continue...                      ");
-     while(getch()!=13);
-   
- for(i=0;i<1500;++i){
-  snake[i].x=-1;
-  snake[i].y=-1;
-  snake[i].direction=0;
- }
-
-
- doornot=0;
- char key=0;
-_GOTO(0,0); 
- for(i=0;i<31;++i){
-     for(n=0;n<52;++n){
-         printf(" ");
-     }
-     printf("\n");
- }
-
- for(i=0;i<30;++i){
- _GOTO(50,i);
- printf("#");
- }
- _GOTO(0,30);
- printf("###################################################");
-
- _GOTO(0,31);
- getscore();
- printf("Score: 0    \nHigh score: %d",hsc);
- for(i=0;i<10000000;++i);
- score=0;
- snake[0].x=24;
- snake[0].y=14;
- snake[0].direction=3;
- doornot=0;
+    _GOTO(0, 31);
+    getscore();
+    printf("Score: 0    \nHigh score: %d", hsc);
+    for (i = 0; i < 10000000; ++i);
+    score = 0;
+    snake[0].x = 24;
+    snake[0].y = 14;
+    snake[0].direction = 3;
+    doornot = 0;
  
-  for(;;){
+    for(;;) {
 /////////////////////////////////////////////////////
 //KEYCODES
     for(i = 0; i < 10000 / speed; i++)
@@ -307,7 +296,7 @@ if((snake[0].x==snake[i].x)&&(snake[0].y==snake[i].y)){
 }
 }
 //////////////LOSING
-  key=0;  
-  }
-     return 0;
+        key=0;  
+    }
+    return 0;
 }
